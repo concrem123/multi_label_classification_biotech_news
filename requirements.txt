@@ -1,0 +1,53 @@
+# do this first to avoid build issues with pyarrow
+pyarrow==21.0.0 --only-binary=:all:
+
+
+# Core numeric stack (ABI-stable)
+numpy==1.26.4
+pandas==2.1.4
+scipy==1.17.0
+
+# ML utilities
+scikit-learn==1.4.2
+joblib==1.5.3
+threadpoolctl==3.6.0
+tensorboard==2.14.0
+protobuf==3.20.3
+
+# PyTorch + HF
+torch==2.2.2
+transformers==4.39.3
+tokenizers==0.15.2
+accelerate==0.27.2
+datasets==4.5.0
+
+# HuggingFace + IO deps (explicit to keep pip honest)
+huggingface-hub==0.36.1
+pyarrow==21.0.0
+fsspec==2025.10.0
+fsspec[http]==2025.10.0
+dill==0.4.0
+multiprocess==0.70.18
+xxhash==3.6.0
+httpx==0.28.1
+
+# General runtime deps
+tqdm==4.67.3
+requests==2.32.5
+pyyaml==6.0.3
+regex==2026.1.15
+typing-extensions==4.15.0
+#packaging==26.0
+packaging==23.1
+python-dateutil==2.9.0.post0
+pytz==2025.2
+tzdata==2025.3
+urllib3==2.6.3
+
+# Streamlit for UI
+streamlit==1.26.0
+tornado==6.5.4
+
+# For API
+fastapi==0.110.0
+uvicorn[standard]==0.29.0
