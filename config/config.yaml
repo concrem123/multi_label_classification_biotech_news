@@ -1,0 +1,24 @@
+model:
+  name: distilbert-base-uncased
+  max_length: 256
+  num_labels: 2
+
+training:
+  output_dir: experiments/distilbert_v1
+  learning_rate: 5e-5
+  batch_size: 16
+  epochs: 3
+  optimizer: adamw_torch
+  logging_steps: 10
+  evaluation_strategy: epoch
+  save_strategy: epoch
+  save_total_limit: 5
+  load_best_model_at_end: true
+  metric_for_best_model: f1
+
+data:
+  processed_path: data/processed/eu_dataset_tokenized
+  processed_path_debug: data/processed/eu_dataset_tokenized_with_text
+  text_column: Text
+  label_column: labels
+  eval_split: 0.1
