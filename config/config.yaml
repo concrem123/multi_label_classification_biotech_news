@@ -1,7 +1,7 @@
 model:
   name: distilbert-base-uncased
   max_length: 256
-  num_labels: 2
+  num_labels: 30
 
 training:
   output_dir: experiments/distilbert_v1
@@ -22,3 +22,13 @@ data:
   text_column: Text
   label_column: labels
   eval_split: 0.1
+
+lora:
+  r: 16
+  alpha: 32
+  target_modules: ["q_lin", "k_lin", "v_lin", "out_lin"]
+  bias: lora_only
+  loftq_bits: 4
+  lora_dropout: 0.1
+  task_type: SEQ_CLS # this is necessary
+  inference_mode: true

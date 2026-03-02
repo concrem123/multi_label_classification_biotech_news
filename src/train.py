@@ -1,0 +1,100 @@
+from pathlib import Path
+import yaml 
+import torch 
+from peft import LoraConfig,LoftQConfig, get_peft_model
+from transformers import TrainingArguments, Trainer, DistilBertForSequenceClassification
+from utils import print_trainable_parameters
+from sklearn.metrics import f1_score
+from datasets import load_from_disk
+import numpy as np
+
+def compute_metrics(eval_pred):
+    logits, labels = eval_pred
+    preds = np.argmax(logits, axis=-1)
+    return {"f1": f1_score(labels, preds)}
+
+
+def train(cfg):
+
+    # Resolve processed dataset path relative to project root
+    ROOT = Path(__file__).resolve().parent.parent
+    processed_path = (ROOT / cfg["data"]["processed_path"]).resolve()
+
+    dataset = load_from_disk(str(processed_path))
+    tokenized_train_dataset = dataset["train"]
+    tokenized_eval_dataset = dataset["eval"]
+
+    model = DistilBertForSequenceClassification.from_pretrained(
+    cfg["model"]["name"],
+    num_labels=cfg["model"]["num_labels"],
+    problem_type="multi_label_classification",
+    )
+
+    loftq_config = LoftQConfig(
+        loftq_bits=cfg["lora"]["loftq_bits"],
+    )
+
+    lora_config = LoraConfig(
+        r=cfg["lora"]["r"],
+        lora_alpha= cfg["lora"]["alpha"],
+        bias=cfg["lora"]["bias"],
+        target_modules=cfg["lora"]["target_modules"],
+        lora_dropout=cfg["lora"]["lora_dropout"],
+        loftq_config=loftq_config,
+        task_type=cfg["lora"]["task_type"],
+        inference_mode=cfg["lora"]["inference_mode"],
+    )
+
+    lora_model = get_peft_model(model, lora_config)
+
+    # Resolve output_dir relative to project root
+    output_dir = (ROOT / cfg["training"]["bert_peft_trainer"]).resolve()
+
+    training_args = TrainingArguments(
+        output_dir=str(output_dir),
+
+       # evaluation & logging
+        evaluation_strategy=cfg["training"].get("evaluation_strategy", "epoch"),
+        logging_strategy="steps",
+        logging_steps=cfg["training"].get("logging_steps", 100),
+
+        # training parameters
+        per_device_train_batch_size=cfg["training"]["batch_size"],
+        per_device_eval_batch_size=cfg["training"]["batch_size"],
+        num_train_epochs=cfg["training"]["epochs"],
+        learning_rate=float(cfg["training"]["learning_rate"]),
+
+        # model selection
+        load_best_model_at_end=cfg["training"]["load_best_model_at_end"],
+        metric_for_best_model=cfg["training"].get("metric_for_best_model", "eval_loss"),
+        greater_is_better=False,
+
+        # output & logging
+        logging_dir=str(output_dir / "logs"),
+        report_to="tensorboard",
+
+        # save strategy
+        save_strategy=cfg["training"].get("save_strategy", "epoch"),
+        save_total_limit=cfg["training"].get("save_total_limit", 5),
+
+        # GPU friendly
+        fp16= False,
+    )
+
+    bert_peft_trainer = Trainer(
+        model=lora_model,
+        args=training_args,
+        train_dataset=tokenized_train_dataset, # training dataset requires column input_ids
+        eval_dataset=tokenized_eval_dataset,
+        compute_metrics=compute_metrics,
+        )
+    bert_peft_trainer.train()
+
+if __name__ == "__main__":
+    ROOT = Path(__file__).resolve().parent.parent
+    config_path = ROOT / "config/config.yaml"
+
+    with open(config_path, "r") as f:
+        cfg = yaml.safe_load(f)
+
+    train(cfg)

@@ -94,6 +94,7 @@ def preprocess_and_save(cfg):
     encoded_dataset = encoded_with_text.remove_columns([cfg["data"]["text_column"]],'Title', 'Content', 'Target Organization')
     encoded_dataset.save_to_disk(str(processed_path))
 
+
 if __name__ == "__main__":
     ROOT = Path(__file__).resolve().parent.parent
     config_path = ROOT / "config/config.yaml"
