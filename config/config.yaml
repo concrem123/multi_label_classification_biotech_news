@@ -1,10 +1,12 @@
 model:
   name: distilbert-base-uncased
   max_length: 256
-  num_labels: 30
+  num_labels: 29
+
 
 training:
   output_dir: experiments/distilbert_v1
+  bert_peft_trainer: experiments/bert_peft_model_v1
   learning_rate: 5e-5
   batch_size: 16
   epochs: 3
@@ -14,7 +16,8 @@ training:
   save_strategy: epoch
   save_total_limit: 5
   load_best_model_at_end: true
-  metric_for_best_model: f1
+  metric_for_best_model: eval_f1_micro
+
 
 data:
   processed_path: data/processed/eu_dataset_tokenized
@@ -22,6 +25,7 @@ data:
   text_column: Text
   label_column: labels
   eval_split: 0.1
+
 
 lora:
   r: 16

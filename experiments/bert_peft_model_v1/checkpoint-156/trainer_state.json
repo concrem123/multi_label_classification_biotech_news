@@ -1,0 +1,136 @@
+{
+  "best_metric": 0.360313315926893,
+  "best_model_checkpoint": "/Users/conorcremin/Repo/Legal Document Classifier/experiments/bert_peft_model_v1/checkpoint-156",
+  "epoch": 1.0,
+  "eval_steps": 500,
+  "global_step": 156,
+  "is_hyper_param_search": false,
+  "is_local_process_zero": true,
+  "is_world_process_zero": true,
+  "log_history": [
+    {
+      "epoch": 0.06,
+      "grad_norm": 0.46830645203590393,
+      "learning_rate": 4.893162393162393e-05,
+      "loss": 0.6736,
+      "step": 10
+    },
+    {
+      "epoch": 0.13,
+      "grad_norm": 0.48708653450012207,
+      "learning_rate": 4.786324786324787e-05,
+      "loss": 0.6263,
+      "step": 20
+    },
+    {
+      "epoch": 0.19,
+      "grad_norm": 0.5172602534294128,
+      "learning_rate": 4.67948717948718e-05,
+      "loss": 0.5768,
+      "step": 30
+    },
+    {
+      "epoch": 0.26,
+      "grad_norm": 0.5805842876434326,
+      "learning_rate": 4.572649572649573e-05,
+      "loss": 0.5195,
+      "step": 40
+    },
+    {
+      "epoch": 0.32,
+      "grad_norm": 0.5523593425750732,
+      "learning_rate": 4.465811965811966e-05,
+      "loss": 0.4594,
+      "step": 50
+    },
+    {
+      "epoch": 0.38,
+      "grad_norm": 0.57347172498703,
+      "learning_rate": 4.358974358974359e-05,
+      "loss": 0.4012,
+      "step": 60
+    },
+    {
+      "epoch": 0.45,
+      "grad_norm": 0.5190393328666687,
+      "learning_rate": 4.252136752136752e-05,
+      "loss": 0.3366,
+      "step": 70
+    },
+    {
+      "epoch": 0.51,
+      "grad_norm": 0.47697630524635315,
+      "learning_rate": 4.145299145299146e-05,
+      "loss": 0.2884,
+      "step": 80
+    },
+    {
+      "epoch": 0.58,
+      "grad_norm": 0.3622509837150574,
+      "learning_rate": 4.038461538461539e-05,
+      "loss": 0.2532,
+      "step": 90
+    },
+    {
+      "epoch": 0.64,
+      "grad_norm": 0.3410765826702118,
+      "learning_rate": 3.931623931623932e-05,
+      "loss": 0.231,
+      "step": 100
+    },
+    {
+      "epoch": 0.71,
+      "grad_norm": 0.27268171310424805,
+      "learning_rate": 3.824786324786325e-05,
+      "loss": 0.2208,
+      "step": 110
+    },
+    {
+      "epoch": 0.77,
+      "grad_norm": 0.28468310832977295,
+      "learning_rate": 3.717948717948718e-05,
+      "loss": 0.2057,
+      "step": 120
+    },
+    {
+      "epoch": 0.83,
+      "grad_norm": 0.2461155205965042,
+      "learning_rate": 3.611111111111111e-05,
+      "loss": 0.2018,
+      "step": 130
+    },
+    {
+      "epoch": 0.9,
+      "grad_norm": 0.24005691707134247,
+      "learning_rate": 3.504273504273504e-05,
+      "loss": 0.194,
+      "step": 140
+    },
+    {
+      "epoch": 0.96,
+      "grad_norm": 0.2526471018791199,
+      "learning_rate": 3.397435897435898e-05,
+      "loss": 0.1956,
+      "step": 150
+    },
+    {
+      "epoch": 1.0,
+      "eval_f1_macro": 0.022988505747126436,
+      "eval_f1_micro": 0.360313315926893,
+      "eval_loss": 0.18220393359661102,
+      "eval_runtime": 59.1032,
+      "eval_samples_per_second": 4.67,
+      "eval_steps_per_second": 0.305,
+      "step": 156
+    }
+  ],
+  "logging_steps": 10,
+  "max_steps": 468,
+  "num_input_tokens_seen": 0,
+  "num_train_epochs": 3,
+  "save_steps": 500,
+  "total_flos": 169124491121664.0,
+  "train_batch_size": 16,
+  "trial_name": null,
+  "trial_params": null
+}

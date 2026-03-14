@@ -5,6 +5,21 @@ import yaml
 from pathlib import Path
 from datasets import Dataset, DatasetDict
 from transformers import DistilBertTokenizer
+import numpy as np
+import random
+
+def process_labels(df, labels_list):
+    labels = pd.Series(labels_list, index=df.index)
+    dummies = (
+        labels.explode()
+        .dropna()
+        .pipe(pd.get_dummies)
+        .groupby(level=0)
+        .max()
+        .astype(int)
+    )
+    df[dummies.columns] = dummies
+    return df
 
 def preprocess_and_save(cfg):
     train_df = pd.read_csv(
@@ -32,8 +47,8 @@ def preprocess_and_save(cfg):
     train_df, eval_df = train_test_split(
         train_df,
         test_size=eval_split,
+        random_state=42
     )
-
     non_label_cols = ['Title','Content','Target Organization','Text']
 
     label_columns = [col for col in train_df.columns if col not in non_label_cols]
@@ -41,6 +56,12 @@ def preprocess_and_save(cfg):
     # Create a new DataFrame containing only the selected label columns
     df_labels_train = train_df[label_columns]
     df_labels_test = test_df[label_columns]
+    df_eval = eval_df[label_columns]
+
+    # Convert the label columns to lists for each row
+    labels_list_train = df_labels_train.values.tolist()
+    labels_list_test = df_labels_test.values.tolist()
+    labels_list_eval = df_eval.values.tolist()
 
     unique_list = []
     for i, label in enumerate(label_columns):
@@ -48,14 +69,22 @@ def preprocess_and_save(cfg):
 
     unique_values = list(set(list for sublist in unique_list for list in sublist))
 
-    mapping_values = {}
-    for i in range(len(unique_values)):
-        mapping_values.update({unique_values[i]: i})
+    unique_values.remove(np.nan)
 
-    for label in label_columns:
-        train_df[label] = train_df[label].map(mapping_values)
-        test_df[label] = test_df[label].map(mapping_values)
-        eval_df[label] = eval_df[label].map(mapping_values)
+    for name in unique_values:
+        train_df[name] = 0
+        test_df[name] = 0
+        eval_df[name] = 0
+
+    train_df = process_labels(train_df, labels_list_train)
+    test_df = process_labels(test_df, labels_list_test)
+    eval_df = process_labels(eval_df, labels_list_eval)
+
+    for df in [train_df, test_df, eval_df]:
+        df[unique_values] = df[unique_values].astype("float32")
+        df["labels"] = df[unique_values].values.tolist()
+        
+
 
     dataset_dict = DatasetDict({
     "train": Dataset.from_pandas(train_df, preserve_index=False),
@@ -63,7 +92,10 @@ def preprocess_and_save(cfg):
     "eval": Dataset.from_pandas(eval_df, preserve_index=False),
     })
     
-    tokenizer = DistilBertTokenizer.from_pretrained(cfg["model"]["name"], do_lower_case=True)
+    tokenizer = DistilBertTokenizer.from_pretrained(
+        cfg["model"]["name"],
+          do_lower_case=True,
+          problem_type="multi_label_classification")
     
 
     # Tokenization function
@@ -91,7 +123,7 @@ def preprocess_and_save(cfg):
     encoded_with_text.save_to_disk(str(processed_debug_path))
 
     # Remove text column for training 
-    encoded_dataset = encoded_with_text.remove_columns([cfg["data"]["text_column"]],'Title', 'Content', 'Target Organization')
+    encoded_dataset = encoded_with_text.remove_columns([cfg["data"]["text_column"],'Title', 'Content', 'Target Organization',*label_columns])
     encoded_dataset.save_to_disk(str(processed_path))
 
 

@@ -18,7 +18,7 @@ protobuf==3.20.3
 torch==2.2.2
 transformers==4.39.3
 tokenizers==0.15.2
-accelerate==0.27.2
+accelerate==0.28.0
 datasets==4.5.0
 loralib==0.3.0
 peft==0.10.0

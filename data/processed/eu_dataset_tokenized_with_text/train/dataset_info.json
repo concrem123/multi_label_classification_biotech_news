@@ -15,28 +15,151 @@
       "_type": "Value"
     },
     "Label 1": {
-      "dtype": "int64",
+      "dtype": "string",
       "_type": "Value"
     },
     "Label 2": {
-      "dtype": "int64",
+      "dtype": "string",
       "_type": "Value"
     },
     "Label 3": {
-      "dtype": "int64",
+      "dtype": "string",
       "_type": "Value"
     },
     "Label 4": {
-      "dtype": "int64",
+      "dtype": "string",
       "_type": "Value"
     },
     "Label 5": {
-      "dtype": "int64",
+      "dtype": "string",
       "_type": "Value"
     },
     "Text": {
       "dtype": "string",
       "_type": "Value"
+    },
+    "article publication": {
+      "dtype": "float32",
+      "_type": "Value"
+    },
+    "event organization": {
+      "dtype": "float32",
+      "_type": "Value"
+    },
+    "other": {
+      "dtype": "float32",
+      "_type": "Value"
+    },
+    "executive appointment": {
+      "dtype": "float32",
+      "_type": "Value"
+    },
+    "ipo exit": {
+      "dtype": "float32",
+      "_type": "Value"
+    },
+    "expanding geography": {
+      "dtype": "float32",
+      "_type": "Value"
+    },
+    "partnerships & alliances": {
+      "dtype": "float32",
+      "_type": "Value"
+    },
+    "patent publication": {
+      "dtype": "float32",
+      "_type": "Value"
+    },
+    "product launching & presentation": {
+      "dtype": "float32",
+      "_type": "Value"
+    },
+    "service & product providing": {
+      "dtype": "float32",
+      "_type": "Value"
+    },
+    "investment in public company": {
+      "dtype": "float32",
+      "_type": "Value"
+    },
+    "foundation": {
+      "dtype": "float32",
+      "_type": "Value"
+    },
+    "hiring": {
+      "dtype": "float32",
+      "_type": "Value"
+    },
+    "product updates": {
+      "dtype": "float32",
+      "_type": "Value"
+    },
+    "expanding industry": {
+      "dtype": "float32",
+      "_type": "Value"
+    },
+    "new initiatives or programs": {
+      "dtype": "float32",
+      "_type": "Value"
+    },
+    "subsidiary establishment": {
+      "dtype": "float32",
+      "_type": "Value"
+    },
+    "alliance & partnership": {
+      "dtype": "float32",
+      "_type": "Value"
+    },
+    "participation in an event": {
+      "dtype": "float32",
+      "_type": "Value"
+    },
+    "support & philanthropy": {
+      "dtype": "float32",
+      "_type": "Value"
+    },
+    "new initiatives & programs": {
+      "dtype": "float32",
+      "_type": "Value"
+    },
+    "m&a": {
+      "dtype": "float32",
+      "_type": "Value"
+    },
+    "company description": {
+      "dtype": "float32",
+      "_type": "Value"
+    },
+    "department establishment": {
+      "dtype": "float32",
+      "_type": "Value"
+    },
+    "executive statement": {
+      "dtype": "float32",
+      "_type": "Value"
+    },
+    "clinical trial sponsorship": {
+      "dtype": "float32",
+      "_type": "Value"
+    },
+    "closing": {
+      "dtype": "float32",
+      "_type": "Value"
+    },
+    "funding round": {
+      "dtype": "float32",
+      "_type": "Value"
+    },
+    "regulatory approval": {
+      "dtype": "float32",
+      "_type": "Value"
+    },
+    "labels": {
+      "feature": {
+        "dtype": "float64",
+        "_type": "Value"
+      },
+      "_type": "List"
     },
     "input_ids": {
       "feature": {

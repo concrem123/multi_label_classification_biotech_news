@@ -1,27 +1,33 @@
 from pathlib import Path
 import yaml 
-import torch 
 from peft import LoraConfig,LoftQConfig, get_peft_model
 from transformers import TrainingArguments, Trainer, DistilBertForSequenceClassification
-from utils import print_trainable_parameters
-from sklearn.metrics import f1_score
+from sklearn.metrics import f1_score, accuracy_score
 from datasets import load_from_disk
 import numpy as np
 
 def compute_metrics(eval_pred):
     logits, labels = eval_pred
-    preds = np.argmax(logits, axis=-1)
-    return {"f1": f1_score(labels, preds)}
+    probs = 1 / (1 + np.exp(-logits))
+    predictions = (probs > 0.5).astype(int)
 
+    return {
+        "eval_f1_micro": f1_score(labels, predictions, average="micro"),
+        "eval_f1_macro": f1_score(labels, predictions, average="macro")
+    }
 
 def train(cfg):
 
     # Resolve processed dataset path relative to project root
     ROOT = Path(__file__).resolve().parent.parent
-    processed_path = (ROOT / cfg["data"]["processed_path"]).resolve()
-
+    processed_path = (ROOT / cfg["data"]["processed_path"]).resolve()  
     dataset = load_from_disk(str(processed_path))
+    dataset.set_format(
+    type="torch",
+    columns=["input_ids", "attention_mask", "labels"]
+)
     tokenized_train_dataset = dataset["train"]
+    print(tokenized_train_dataset)
     tokenized_eval_dataset = dataset["eval"]
 
     model = DistilBertForSequenceClassification.from_pretrained(
@@ -67,7 +73,7 @@ def train(cfg):
         # model selection
         load_best_model_at_end=cfg["training"]["load_best_model_at_end"],
         metric_for_best_model=cfg["training"].get("metric_for_best_model", "eval_loss"),
-        greater_is_better=False,
+        greater_is_better=True,
 
         # output & logging
         logging_dir=str(output_dir / "logs"),
