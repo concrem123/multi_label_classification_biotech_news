@@ -10,6 +10,7 @@ import random
 
 def process_labels(df, labels_list):
     labels = pd.Series(labels_list, index=df.index)
+    print(labels)
     dummies = (
         labels.explode()
         .dropna()
@@ -79,6 +80,28 @@ def preprocess_and_save(cfg):
     train_df = process_labels(train_df, labels_list_train)
     test_df = process_labels(test_df, labels_list_test)
     eval_df = process_labels(eval_df, labels_list_eval)
+
+    train_df["alliance & partnership"] = (
+    train_df["alliance & partnership"] +
+    train_df["partnerships & alliances"]
+    ).clip(upper=1)
+
+    test_df["alliance & partnership"] = (
+        test_df["alliance & partnership"] +
+        test_df["partnerships & alliances"]
+    ).clip(upper=1)
+
+    eval_df["alliance & partnership"] = (
+        eval_df["alliance & partnership"] +
+        eval_df["partnerships & alliances"]
+    ).clip(upper=1)
+
+    train_df.drop(columns=["partnerships & alliances"], inplace=True)
+    test_df.drop(columns=["partnerships & alliances"], inplace=True)
+    eval_df.drop(columns=["partnerships & alliances"], inplace=True)
+
+    unique_values.remove('partnerships & alliances')
+    unique_values.remove('new initiatives or programs')
 
     for df in [train_df, test_df, eval_df]:
         df[unique_values] = df[unique_values].astype("float32")

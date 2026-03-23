@@ -27,7 +27,6 @@ def train(cfg):
     columns=["input_ids", "attention_mask", "labels"]
 )
     tokenized_train_dataset = dataset["train"]
-    print(tokenized_train_dataset)
     tokenized_eval_dataset = dataset["eval"]
 
     model = DistilBertForSequenceClassification.from_pretrained(
@@ -95,6 +94,7 @@ def train(cfg):
         compute_metrics=compute_metrics,
         )
     bert_peft_trainer.train()
+    bert_peft_trainer.save_model(str(output_dir / "final"))
 
 if __name__ == "__main__":
     ROOT = Path(__file__).resolve().parent.parent

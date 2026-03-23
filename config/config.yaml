@@ -1,12 +1,40 @@
 model:
   name: distilbert-base-uncased
   max_length: 256
-  num_labels: 29
+  num_labels: 27
+  class_names:
+    - event organization
+    - other
+    - product launching & presentation
+    - patent publication
+    - investment in public company
+    - foundation
+    - expanding industry
+    - department establishment
+    - closing
+    - subsidiary establishment
+    - executive statement
+    - ipo exit
+    - service & product providing
+    - hiring
+    - expanding geography
+    - product updates
+    - executive appointment
+    - m&a
+    - new initiatives & programs
+    - company description
+    - support & philanthropy
+    - funding round
+    - clinical trial sponsorship
+    - alliance & partnership
+    - participation in an event
+    - regulatory approval
+    - article publication
 
 
 training:
-  output_dir: experiments/distilbert_v1
-  bert_peft_trainer: experiments/bert_peft_model_v1
+  output_dir: experiments/distilbert_v2
+  bert_peft_trainer: experiments/bert_peft_model_v2
   learning_rate: 5e-5
   batch_size: 16
   epochs: 3
