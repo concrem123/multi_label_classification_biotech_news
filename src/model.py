@@ -40,7 +40,17 @@ def predict_sentiment(text, cfg):
     probs = torch.sigmoid(torch.tensor(logits)).numpy()
     preds = (probs > 0.5).astype(int)
 
-    print(preds)
+    print(f"preds {preds}")
+    # class names
+    class_names = cfg["model"].get("class_names", None)
+
+    for pred in preds:
+        pred_labels = [class_names[i] for i, p in enumerate(pred) if p == 1]
+        #print(f"Predicted labels: {pred_labels}")
+
+    print(f"Predicted labels: {pred_labels}")
+
+    return pred_labels
 
 
 if __name__ == "__main__":

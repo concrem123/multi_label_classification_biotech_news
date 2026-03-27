@@ -1,38 +1,68 @@
-import pandas as pd
-import os
-from sklearn.model_selection import train_test_split
-import yaml
 from pathlib import Path
+import pandas as pd
+import numpy as np
+import yaml
+from sklearn.model_selection import train_test_split
 from datasets import Dataset, DatasetDict
 from transformers import DistilBertTokenizer
-import numpy as np
-import random
 
-def process_labels(df, labels_list):
-    labels = pd.Series(labels_list, index=df.index)
-    print(labels)
-    dummies = (
-        labels.explode()
-        .dropna()
-        .pipe(pd.get_dummies)
-        .groupby(level=0)
-        .max()
-        .astype(int)
-    )
-    df[dummies.columns] = dummies
+
+# ---------------------------
+# Label normalization
+# ---------------------------
+def normalize_label(label):
+    if pd.isna(label):
+        return None
+
+    label = str(label).strip().lower()
+
+    # unify variants
+    if label == "new initiatives or programs":
+        return "new initiatives & programs"
+    if label == "partnerships & alliances":
+        return "alliance & partnership"
+
+    return label
+
+
+# ---------------------------
+# Convert row → multi-hot vector
+# ---------------------------
+def build_label_matrix(df, label_columns, label_list):
+    df_labels = df[label_columns].fillna("")
+
+    all_labels = []
+    for _, row in df_labels.iterrows():
+        labels = [normalize_label(v) for v in row if v != ""]
+        labels = [l for l in labels if l is not None]
+        all_labels.append(labels)
+
+    # Create multi-hot encoding
+    label_to_idx = {label: i for i, label in enumerate(label_list)}
+
+    multi_hot = []
+    for labels in all_labels:
+        vec = np.zeros(len(label_list), dtype=np.float32)
+        for l in labels:
+            if l in label_to_idx:
+                vec[label_to_idx[l]] = 1.0
+        multi_hot.append(vec.tolist())
+
+    df["labels"] = multi_hot
     return df
 
+
+# ---------------------------
+# Main preprocessing
+# ---------------------------
 def preprocess_and_save(cfg):
-    train_df = pd.read_csv(
-        os.path.join(os.getcwd(), "data", "raw", "train.csv")
-    )
+    ROOT = Path(__file__).resolve().parent.parent
 
-    test_df = pd.read_csv(
-        os.path.join(os.getcwd(), "data", "raw", "test.csv")
-    )
+    # Load data
+    train_df = pd.read_csv(ROOT / "data/raw/train.csv")
+    test_df = pd.read_csv(ROOT / "data/raw/test.csv")
 
-    all_data = pd.concat([train_df, test_df], ignore_index=True)
-
+    # Fill text columns
     for df in [train_df, test_df]:
         df["Title"] = df["Title"].fillna("").astype(str)
         df["Content"] = df["Content"].fillna("").astype(str)
@@ -44,84 +74,62 @@ def preprocess_and_save(cfg):
             + " Target Organization: " + df["Target Organization"]
         )
 
-    eval_split = cfg['data']['eval_split']
+    # Split train → train/eval
     train_df, eval_df = train_test_split(
         train_df,
-        test_size=eval_split,
+        test_size=cfg["data"]["eval_split"],
         random_state=42
     )
-    non_label_cols = ['Title','Content','Target Organization','Text']
 
+    # Identify label columns
+    non_label_cols = ['Title', 'Content', 'Target Organization', 'Text']
     label_columns = [col for col in train_df.columns if col not in non_label_cols]
 
-    # Create a new DataFrame containing only the selected label columns
-    df_labels_train = train_df[label_columns]
-    df_labels_test = test_df[label_columns]
-    df_eval = eval_df[label_columns]
+    # ---------------------------
+    # Build global label list (sorted!)
+    # ---------------------------
+    all_labels_raw = pd.concat([
+        train_df[label_columns],
+        test_df[label_columns],
+        eval_df[label_columns]
+    ])
 
-    # Convert the label columns to lists for each row
-    labels_list_train = df_labels_train.values.tolist()
-    labels_list_test = df_labels_test.values.tolist()
-    labels_list_eval = df_eval.values.tolist()
+    unique_labels = set()
 
-    unique_list = []
-    for i, label in enumerate(label_columns):
-        unique_list.append(all_data[label].unique())
+    for col in label_columns:
+        unique_labels.update(
+            normalize_label(v) for v in all_labels_raw[col].dropna().unique()
+        )
 
-    unique_values = list(set(list for sublist in unique_list for list in sublist))
+    unique_labels.discard(None)
 
-    unique_values.remove(np.nan)
+    # sorted for consistency
+    label_list = sorted(unique_labels)
 
-    for name in unique_values:
-        train_df[name] = 0
-        test_df[name] = 0
-        eval_df[name] = 0
+    print(f"\nFinal label set ({len(label_list)}):")
+    print(label_list)
 
-    train_df = process_labels(train_df, labels_list_train)
-    test_df = process_labels(test_df, labels_list_test)
-    eval_df = process_labels(eval_df, labels_list_eval)
+    # ---------------------------
+    # Build multi-hot labels
+    # ---------------------------
+    train_df = build_label_matrix(train_df, label_columns, label_list)
+    test_df = build_label_matrix(test_df, label_columns, label_list)
+    eval_df = build_label_matrix(eval_df, label_columns, label_list)
 
-    train_df["alliance & partnership"] = (
-    train_df["alliance & partnership"] +
-    train_df["partnerships & alliances"]
-    ).clip(upper=1)
-
-    test_df["alliance & partnership"] = (
-        test_df["alliance & partnership"] +
-        test_df["partnerships & alliances"]
-    ).clip(upper=1)
-
-    eval_df["alliance & partnership"] = (
-        eval_df["alliance & partnership"] +
-        eval_df["partnerships & alliances"]
-    ).clip(upper=1)
-
-    train_df.drop(columns=["partnerships & alliances"], inplace=True)
-    test_df.drop(columns=["partnerships & alliances"], inplace=True)
-    eval_df.drop(columns=["partnerships & alliances"], inplace=True)
-
-    unique_values.remove('partnerships & alliances')
-    unique_values.remove('new initiatives or programs')
-
-    for df in [train_df, test_df, eval_df]:
-        df[unique_values] = df[unique_values].astype("float32")
-        df["labels"] = df[unique_values].values.tolist()
-        
-
-
+    # ---------------------------
+    # Convert to HF datasets
+    # ---------------------------
     dataset_dict = DatasetDict({
-    "train": Dataset.from_pandas(train_df, preserve_index=False),
-    "test": Dataset.from_pandas(test_df, preserve_index=False),
-    "eval": Dataset.from_pandas(eval_df, preserve_index=False),
+        "train": Dataset.from_pandas(train_df, preserve_index=False),
+        "test": Dataset.from_pandas(test_df, preserve_index=False),
+        "eval": Dataset.from_pandas(eval_df, preserve_index=False),
     })
-    
-    tokenizer = DistilBertTokenizer.from_pretrained(
-        cfg["model"]["name"],
-          do_lower_case=True,
-          problem_type="multi_label_classification")
-    
 
-    # Tokenization function
+    # ---------------------------
+    # Tokenization
+    # ---------------------------
+    tokenizer = DistilBertTokenizer.from_pretrained(cfg["model"]["name"])
+
     def preprocess_function(examples):
         return tokenizer(
             examples[cfg["data"]["text_column"]],
@@ -130,26 +138,32 @@ def preprocess_and_save(cfg):
             max_length=cfg["model"]["max_length"],
         )
 
-    # Apply tokenization to all splits
-    encoded_with_text = dataset_dict.map(preprocess_function, batched=True, desc="Tokenizing")
+    dataset_dict = dataset_dict.map(preprocess_function, batched=True)
 
-    # Resolve project root and dataset paths
-    ROOT = Path(__file__).resolve().parent.parent
+    # ---------------------------
+    # Keep ONLY required columns
+    # ---------------------------
+    keep_cols = ["input_ids", "attention_mask", "labels"]
+
+    dataset_dict = dataset_dict.remove_columns([
+        col for col in dataset_dict["train"].column_names if col not in keep_cols
+    ])
+
+    # ---------------------------
+    # Save
+    # ---------------------------
     processed_path = (ROOT / cfg["data"]["processed_path"]).resolve()
-    processed_debug_path = (ROOT / cfg["data"]["processed_path_debug"]).resolve()
-
-    # Create directories if they don't exist
-    processed_debug_path.parent.mkdir(parents=True, exist_ok=True)
     processed_path.parent.mkdir(parents=True, exist_ok=True)
 
-    # Save dataset with text (for debugging)
-    encoded_with_text.save_to_disk(str(processed_debug_path))
+    dataset_dict.save_to_disk(str(processed_path))
 
-    # Remove text column for training 
-    encoded_dataset = encoded_with_text.remove_columns([cfg["data"]["text_column"],'Title', 'Content', 'Target Organization',*label_columns])
-    encoded_dataset.save_to_disk(str(processed_path))
+    print("\n Saved processed dataset")
+    print(dataset_dict)
 
 
+# ---------------------------
+# Entry point
+# ---------------------------
 if __name__ == "__main__":
     ROOT = Path(__file__).resolve().parent.parent
     config_path = ROOT / "config/config.yaml"

@@ -7,7 +7,7 @@ from datasets import load_from_disk
 import numpy as np
 
 def compute_metrics(eval_pred):
-    logits, labels = eval_pred
+    logits, labels = eval_pred.predictions, eval_pred.label_ids
     probs = 1 / (1 + np.exp(-logits))
     predictions = (probs > 0.5).astype(int)
 
@@ -71,7 +71,7 @@ def train(cfg):
 
         # model selection
         load_best_model_at_end=cfg["training"]["load_best_model_at_end"],
-        metric_for_best_model=cfg["training"].get("metric_for_best_model", "eval_loss"),
+        metric_for_best_model=cfg["training"].get("metric_for_best_model"), 
         greater_is_better=True,
 
         # output & logging
