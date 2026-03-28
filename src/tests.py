@@ -22,4 +22,4 @@ tokenized_train_dataset = dataset["train"]
 tokenized_eval_dataset = dataset["eval"]
 
 
-print (tokenized_train_dataset)
+print (tokenized_train_dataset[0])

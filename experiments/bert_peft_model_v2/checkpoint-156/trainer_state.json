@@ -1,5 +1,5 @@
 {
-  "best_metric": 0.3684913217623498,
+  "best_metric": 0.360313315926893,
   "best_model_checkpoint": "/Users/conorcremin/Repo/Legal Document Classifier/experiments/bert_peft_model_v2/checkpoint-156",
   "epoch": 1.0,
   "eval_steps": 500,
@@ -10,117 +10,117 @@
   "log_history": [
     {
       "epoch": 0.06,
-      "grad_norm": 0.49451443552970886,
+      "grad_norm": 0.47988882660865784,
       "learning_rate": 4.893162393162393e-05,
-      "loss": 0.6725,
+      "loss": 0.6693,
       "step": 10
     },
     {
       "epoch": 0.13,
-      "grad_norm": 0.5112653970718384,
+      "grad_norm": 0.4990484416484833,
       "learning_rate": 4.786324786324787e-05,
-      "loss": 0.6196,
+      "loss": 0.6224,
       "step": 20
     },
     {
       "epoch": 0.19,
-      "grad_norm": 0.5332502126693726,
+      "grad_norm": 0.5190346837043762,
       "learning_rate": 4.67948717948718e-05,
-      "loss": 0.5649,
+      "loss": 0.5751,
       "step": 30
     },
     {
       "epoch": 0.26,
-      "grad_norm": 0.5935168862342834,
+      "grad_norm": 0.5817189812660217,
       "learning_rate": 4.572649572649573e-05,
-      "loss": 0.5045,
+      "loss": 0.516,
       "step": 40
     },
     {
       "epoch": 0.32,
-      "grad_norm": 0.5537286996841431,
+      "grad_norm": 0.5603694915771484,
       "learning_rate": 4.465811965811966e-05,
-      "loss": 0.4399,
+      "loss": 0.4578,
       "step": 50
     },
     {
       "epoch": 0.38,
-      "grad_norm": 0.5652660727500916,
+      "grad_norm": 0.5694255828857422,
       "learning_rate": 4.358974358974359e-05,
-      "loss": 0.3817,
+      "loss": 0.401,
       "step": 60
     },
     {
       "epoch": 0.45,
-      "grad_norm": 0.49186450242996216,
+      "grad_norm": 0.5193509459495544,
       "learning_rate": 4.252136752136752e-05,
-      "loss": 0.3199,
+      "loss": 0.3394,
       "step": 70
     },
     {
       "epoch": 0.51,
-      "grad_norm": 0.44317060708999634,
+      "grad_norm": 0.4718138873577118,
       "learning_rate": 4.145299145299146e-05,
-      "loss": 0.277,
+      "loss": 0.2921,
       "step": 80
     },
     {
       "epoch": 0.58,
-      "grad_norm": 0.3374551236629486,
+      "grad_norm": 0.3486483693122864,
       "learning_rate": 4.038461538461539e-05,
-      "loss": 0.2495,
+      "loss": 0.2592,
       "step": 90
     },
     {
       "epoch": 0.64,
-      "grad_norm": 0.31867799162864685,
+      "grad_norm": 0.34858015179634094,
       "learning_rate": 3.931623931623932e-05,
-      "loss": 0.2289,
+      "loss": 0.2395,
       "step": 100
     },
     {
       "epoch": 0.71,
-      "grad_norm": 0.2657288610935211,
+      "grad_norm": 0.27837803959846497,
       "learning_rate": 3.824786324786325e-05,
-      "loss": 0.2196,
+      "loss": 0.2302,
       "step": 110
     },
     {
       "epoch": 0.77,
-      "grad_norm": 0.2705690562725067,
+      "grad_norm": 0.28356418013572693,
       "learning_rate": 3.717948717948718e-05,
-      "loss": 0.2092,
+      "loss": 0.2152,
       "step": 120
     },
     {
       "epoch": 0.83,
-      "grad_norm": 0.24033556878566742,
+      "grad_norm": 0.2564328610897064,
       "learning_rate": 3.611111111111111e-05,
-      "loss": 0.2,
+      "loss": 0.2137,
       "step": 130
     },
     {
       "epoch": 0.9,
-      "grad_norm": 0.23161885142326355,
+      "grad_norm": 0.24497628211975098,
       "learning_rate": 3.504273504273504e-05,
-      "loss": 0.1989,
+      "loss": 0.2052,
       "step": 140
     },
     {
       "epoch": 0.96,
-      "grad_norm": 0.24866491556167603,
+      "grad_norm": 0.26218435168266296,
       "learning_rate": 3.397435897435898e-05,
-      "loss": 0.1969,
+      "loss": 0.206,
       "step": 150
     },
     {
       "epoch": 1.0,
       "eval_f1_macro": 0.024691358024691357,
-      "eval_f1_micro": 0.3684913217623498,
-      "eval_loss": 0.1860259771347046,
-      "eval_runtime": 33.8958,
-      "eval_samples_per_second": 8.143,
-      "eval_steps_per_second": 0.531,
+      "eval_f1_micro": 0.360313315926893,
+      "eval_loss": 0.19278863072395325,
+      "eval_runtime": 30.8071,
+      "eval_samples_per_second": 8.959,
+      "eval_steps_per_second": 0.584,
       "step": 156
     }
   ],

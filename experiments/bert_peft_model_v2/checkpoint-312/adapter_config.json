@@ -24,9 +24,9 @@
   "revision": null,
   "target_modules": [
     "q_lin",
-    "out_lin",
+    "v_lin",
     "k_lin",
-    "v_lin"
+    "out_lin"
   ],
   "task_type": "SEQ_CLS",
   "use_dora": false,

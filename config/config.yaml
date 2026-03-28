@@ -1,6 +1,6 @@
 model:
   name: distilbert-base-uncased
-  max_length: 256
+  max_length: 512
   num_labels: 27
   class_names:
     - event organization

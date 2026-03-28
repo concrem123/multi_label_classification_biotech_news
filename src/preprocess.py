@@ -93,7 +93,7 @@ def preprocess_and_save(cfg):
         test_df[label_columns],
         eval_df[label_columns]
     ])
-
+    print("all_labels_raw:", all_labels_raw)
     unique_labels = set()
 
     for col in label_columns:
