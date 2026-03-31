@@ -50,8 +50,6 @@ def evaluate(cfg):
         args=training_args,
     )
 
-    
-    trainer = Trainer(model=model)
 
     # Predictions
     predictions = trainer.predict(tokenized_test_dataset)

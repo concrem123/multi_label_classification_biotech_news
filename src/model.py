@@ -32,7 +32,7 @@ def predict_sentiment(text, cfg):
     inputs = tokenizer(text, return_tensors="pt", truncation=True, padding="max_length", max_length=cfg["model"]["max_length"])
 
     with torch.no_grad():
-        outputs = model(**inputs)
+        outputs = merged_model(**inputs)
 
     logits = outputs.logits
 

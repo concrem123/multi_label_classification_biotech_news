@@ -4,7 +4,7 @@ import numpy as np
 import yaml
 from sklearn.model_selection import train_test_split
 from datasets import Dataset, DatasetDict
-from transformers import DistilBertTokenizer
+from transformers import AutoTokenizer
 
 
 # ---------------------------
@@ -128,7 +128,7 @@ def preprocess_and_save(cfg):
     # ---------------------------
     # Tokenization
     # ---------------------------
-    tokenizer = DistilBertTokenizer.from_pretrained(cfg["model"]["name"])
+    tokenizer = AutoTokenizer.from_pretrained(cfg["model"]["name"])
 
     def preprocess_function(examples):
         return tokenizer(
